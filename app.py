@@ -40,7 +40,7 @@ class PlotWindow(QtWidgets.QWidget):
                 func_i = [Spline.func.func(x) for x in x_space]
                 error_i = Lab2.np.absolute(Lab2.np.array(spline_i) - Lab2.np.array(func_i))
                 self.plot_widget.getPlotItem().plot(x_space, error_i, pen=pg.mkPen(color="blue", width=2.0))
-                Spline.error_spline.append(zip(x_space,func_i, spline_i, error_i))
+                Spline.error_spline.extend(list(zip(x_space,func_i, spline_i, error_i)))
         elif mode == "Spline derivative":
             self.plot_widget.getPlotItem().plot([],[], pen=pg.mkPen(color="purple", width=2.0), name="S'(x)")
             self.plot_widget.getPlotItem().plot([],[], pen=pg.mkPen(color="yellow", width=2.0, style=QtCore.Qt.DashLine), name="F'(x)")
@@ -61,7 +61,7 @@ class PlotWindow(QtWidgets.QWidget):
                 func_i = [Spline.func.derivative(x) for x in x_space]
                 error_i = Lab2.np.absolute(Lab2.np.array(spline_i) - Lab2.np.array(func_i))
                 self.plot_widget.getPlotItem().plot(x_space, error_i, pen=pg.mkPen(color="blue", width=2.0))
-                Spline.error_derivative.append(zip(x_space,func_i, spline_i, error_i))
+                Spline.error_derivative.extend(list(zip(x_space,func_i, spline_i, error_i)))
 
         elif mode == "Spline 2derivative":
             self.plot_widget.getPlotItem().plot([],[], pen=pg.mkPen(color="purple", width=2.0), name="S'(x)")
@@ -84,7 +84,7 @@ class PlotWindow(QtWidgets.QWidget):
                 func_i = [Spline.func.derivative_2(x) for x in x_space]
                 error_i = Lab2.np.absolute(Lab2.np.array(spline_i) - Lab2.np.array(func_i))
                 self.plot_widget.getPlotItem().plot(x_space, error_i, pen=pg.mkPen(color="blue", width=2.0))
-                Spline.error_derivative_2.append(zip(x_space,func_i, spline_i, error_i))
+                Spline.error_derivative_2.extend(list(zip(x_space,func_i, spline_i, error_i)))
 
 
 class SplineApp(QtWidgets.QMainWindow):
@@ -159,20 +159,17 @@ class SplineApp(QtWidgets.QMainWindow):
             else:
                 self.ui.tableWidget.setRowCount(N)
                 for j, (es, ed, ed2) in enumerate(zip(spline.error_spline, spline.error_derivative, spline.error_derivative_2)):
-                    x_j = spline.a + spline.h*j
                     self.ui.tableWidget.setItem(j, 0, QtWidgets.QTableWidgetItem(str(j)))
-                    self.ui.tableWidget.setItem(j, 1, QtWidgets.QTableWidgetItem(str(x_j)))
-                    if x_j != es[0]:
-                        print("Пиздос!")
-                    self.ui.tableWidget.setItem(j, 2, QtWidgets.QTableWidgetItem(str(es[1]))) 
-                    self.ui.tableWidget.setItem(j, 3, QtWidgets.QTableWidgetItem(str(es[2])))
-                    self.ui.tableWidget.setItem(j, 4, QtWidgets.QTableWidgetItem(str(es[3])))
-                    self.ui.tableWidget.setItem(j, 5, QtWidgets.QTableWidgetItem(str(ed[1])))
-                    self.ui.tableWidget.setItem(j, 6, QtWidgets.QTableWidgetItem(str(ed[2])))
-                    self.ui.tableWidget.setItem(j, 7, QtWidgets.QTableWidgetItem(str(ed[3])))
-                    self.ui.tableWidget.setItem(j, 8, QtWidgets.QTableWidgetItem(str(ed2[1])))
-                    self.ui.tableWidget.setItem(j, 9, QtWidgets.QTableWidgetItem(str(ed2[2])))
-                    self.ui.tableWidget.setItem(j, 10, QtWidgets.QTableWidgetItem(str(ed2[3])))
+                    self.ui.tableWidget.setItem(j, 1, QtWidgets.QTableWidgetItem(str(es[0])))
+                    self.ui.tableWidget.setItem(j, 2, QtWidgets.QTableWidgetItem(f"{es[1]:.4f}")) 
+                    self.ui.tableWidget.setItem(j, 3, QtWidgets.QTableWidgetItem(f"{es[2]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 4, QtWidgets.QTableWidgetItem(f"{es[3]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 5, QtWidgets.QTableWidgetItem(f"{ed[1]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 6, QtWidgets.QTableWidgetItem(f"{ed[2]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 7, QtWidgets.QTableWidgetItem(f"{ed[3]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 8, QtWidgets.QTableWidgetItem(f"{ed2[1]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 9, QtWidgets.QTableWidgetItem(f"{ed2[2]:.4f}"))
+                    self.ui.tableWidget.setItem(j, 10, QtWidgets.QTableWidgetItem(f"{ed2[3]:.4f}"))
 
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Ошибка", str(e))
